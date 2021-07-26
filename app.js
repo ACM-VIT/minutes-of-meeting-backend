@@ -3,13 +3,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const passport = require("passport");
 const session = require("express-session");
-// const flash = require("connect-flash");
 const bodyParser = require("body-parser");
-// const showdown = require("showdown");
 const MongoStore = require("connect-mongo");
 const cors = require("cors");
-
-// convertRouter = require("./routes/index");
 
 const connectDB = require("./config/db");
 
@@ -37,20 +33,23 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(flash());
+// cors
+app.use(cors({ origin: "http://localhost:3000/", credentials: true }));
 
 // Routes
 app.use("/", require("./routes"));
 app.use("/auth", require("./routes/auth"));
-// app.use("/convert", convertRouter);
+app.use("/api", require("./routes/index"));
+app.get("/login", (req, res) => {
+  res.send(req.user);
+  console.log(req.user);
+  // console.log(res);
+});
 
-// Body-Parser
+// Body-Parser Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// cors
-app.use(cors());
-
-const PORT = process.env.PORT;
+const PORT = 9000 || process.env.PORT;
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

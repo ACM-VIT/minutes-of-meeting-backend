@@ -1,8 +1,11 @@
+// ACM Members
+
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("API is working properly!");
+// testing
+router.get("/", async (req, res) => {
+  res.send("API working properly!");
 });
 
 module.exports = router;

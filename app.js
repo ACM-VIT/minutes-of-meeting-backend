@@ -25,12 +25,12 @@ const app = express();
 
 // sessions
 app.use(
-	session({
-		secret: "acta",
-		resave: false,
-		saveUninitialized: false,
-		store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-	})
+  session({
+    secret: "acta",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  })
 );
 
 // passport middleware
@@ -40,7 +40,7 @@ app.use(passport.session());
 // app.use(flash());
 
 // Routes
-app.use("/", require("./routes/"));
+app.use("/", require("./routes"));
 app.use("/auth", require("./routes/auth"));
 // app.use("/convert", convertRouter);
 

@@ -6,7 +6,7 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-/** 
+/**
  * @description Auth with google
  * @route {GET} /auth/google
  * @param {Object} req - Express request object
@@ -17,7 +17,7 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-/** 
+/**
  * @description google Auth callback
  * @route {GET} /auth/google/callback
  * @param {Object} req - Express request object
@@ -33,7 +33,7 @@ router.get(
   }
 );
 
-/** 
+/**
  * @description Logouts User
  * @route {GET} /auth/logout
  * @param {Object} req - Express request object

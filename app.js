@@ -12,14 +12,14 @@ const connectDB = require("./config/db");
 // Load Config
 dotenv.config({ path: "./config/config.env" });
 
-// passport config
+// Passport config
 require("./config/passport")(passport);
 
 connectDB();
 
 const app = express();
 
-// sessions
+// Sessions
 app.use(
   session({
     secret: "acta",
@@ -29,7 +29,7 @@ app.use(
   })
 );
 
-// passport middleware
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -39,6 +39,12 @@ app.use(cors({ origin: "http://localhost:3000/", credentials: true }));
 // Body-Parser Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Set global var (used in routes)
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 
 // Routes
 app.use("/", require("./routes/index"));

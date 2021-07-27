@@ -36,19 +36,19 @@ app.use(passport.session());
 // cors
 app.use(cors({ origin: "http://localhost:3000/", credentials: true }));
 
+// Body-Parser Middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 // Routes
-app.use("/", require("./routes"));
+app.use("/", require("./routes/index"));
 app.use("/auth", require("./routes/auth"));
-app.use("/api", require("./routes/index"));
+app.use("/moms", require("./routes/moms"));
 app.get("/login", (req, res) => {
   res.send(req.user);
   console.log(req.user);
   // console.log(res);
 });
-
-// Body-Parser Middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 const PORT = 9000 || process.env.PORT;
 

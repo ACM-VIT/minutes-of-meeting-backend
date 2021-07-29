@@ -1,5 +1,4 @@
 const express = require("express");
-const User = require("../models/User");
 const Mom = require("../models/Mom");
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router.get("/dashboard", async (req, res) => {
   } catch (err) {
     console.error(err);
     // error page
-    // res.render("error/500")
+    // res.render("error/500");
   }
 });
 

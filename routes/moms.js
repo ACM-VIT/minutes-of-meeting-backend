@@ -1,7 +1,6 @@
 // Markdown routes(CRUD features)
 
 const express = require("express");
-const User = require("../models/User");
 const Mom = require("../models/Mom");
 const router = express.Router();
 
@@ -15,10 +14,10 @@ router.get("/add", (req, res) => {
 // @route POST /moms
 router.post("/", async (req, res) => {
   try {
-    req.body.user = req.user.id;
-    await User.create(req.body);
-    res.send(req.body.id);
-    res.redirect("/dashboard");
+    // req.body.user = req.user.id;
+    await Mom.create(req.body);
+    // res.redirect("/dashboard");
+    res.send(req.body);
   } catch (err) {
     console.error(err);
     // res.render("error/500");

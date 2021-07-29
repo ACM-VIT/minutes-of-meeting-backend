@@ -1,5 +1,6 @@
 // Markdown routes(CRUD features)
 
+const { response } = require("express");
 const express = require("express");
 const Mom = require("../models/Mom");
 const router = express.Router();
@@ -32,6 +33,8 @@ router.get("/", async (req, res) => {
       .populate("user")
       .sort({ createdAt: "desc" })
       .lean();
+    res.json({ moms: moms });
+    // console.log(moms);
 
     /* 
     res.render("moms/index", {

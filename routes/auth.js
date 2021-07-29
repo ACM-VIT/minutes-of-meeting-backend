@@ -29,7 +29,7 @@ router.get(
     failureRedirect: process.env.CLIENT_ERROR_URL,
   }),
   (req, res) => {
-    res.redirect(process.env.CLIENT_URL);
+    res.redirect(process.env.CLIENT_HOME_URL);
   }
 );
 

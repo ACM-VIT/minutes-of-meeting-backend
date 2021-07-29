@@ -15,7 +15,7 @@ module.exports = function (passport) {
         // const userToken = {
         //   token: accessToken,
         // };
-        console.log(accessToken);
+        // console.log(accessToken);
 
         const newUser = {
           googleId: profile.id,

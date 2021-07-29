@@ -1,6 +1,5 @@
 // Markdown routes(CRUD features)
 
-const { response } = require("express");
 const express = require("express");
 const Mom = require("../models/Mom");
 const router = express.Router();
@@ -29,7 +28,7 @@ router.post("/", async (req, res) => {
 // @route GET /moms
 router.get("/", async (req, res) => {
   try {
-    const moms = await Mom.find({ status: "public" })
+    const moms = await Mom.find()
       .populate("user")
       .sort({ createdAt: "desc" })
       .lean();

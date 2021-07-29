@@ -25,12 +25,13 @@ router.post("/", async (req, res) => {
 });
 
 // @desc Show all moms (public)
-// @route GET /moms/add
+// @route GET /moms
 router.get("/", async (req, res) => {
   try {
-    const mom = await Mom.find({ status: "public" })
+    const moms = await Mom.find({ status: "public" })
       .populate("user")
-      .sort({ createdAt: "desc" });
+      .sort({ createdAt: "desc" })
+      .lean();
 
     /* 
     res.render("moms/index", {
@@ -46,7 +47,7 @@ router.get("/", async (req, res) => {
 // @route GET /moms/:id
 router.get("/:id", async (req, res) => {
   try {
-    const mom = await Mom.findById(req.params.id).populate("user");
+    const mom = await Mom.findById(req.params.id).populate("user").lean();
 
     if (!mom) {
       // return res.render("error/404");
@@ -67,7 +68,7 @@ router.get("/:id", async (req, res) => {
 router.get("/edit/:id", async (req, res) => {
   const mom = await Mom.findOne({
     _id: req.params.id,
-  });
+  }).lean();
 
   if (!mom) {
     // return res.render("error/404")
@@ -88,7 +89,7 @@ router.get("/edit/:id", async (req, res) => {
 // @route PUT /moms/:id
 router.put("/:id", async (req, res) => {
   try {
-    let mom = Mom.findById(req.params.id);
+    let mom = Mom.findById(req.params.id).lean();
 
     if (!mom) {
       // return res.render("error/404");
@@ -113,13 +114,43 @@ router.put("/:id", async (req, res) => {
 
 // @desc Delete MoM
 // @ route DELETE /moms/:id
-router.get("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    await Mom.remove({ _id: req.params.id });
-    res.redirect("/dashboard");
+    const mom = await Mom.findById(req.params.id).lean();
+
+    if (!mom) {
+      // return res.render("error/404");
+    }
+
+    if (mom.user !== req.user.id) {
+      res.redirect("/moms");
+    } else {
+      await Mom.remove({ _id: req.params.id });
+      res.redirect("/dashboard");
+    }
   } catch (err) {
     console.error(err);
     // return res.render("error/500");
+  }
+});
+
+// @desc Singer user MoMs
+// @route GET /moms/user/:userId
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const moms = await Mom.find({
+      user: req.params.userId,
+    })
+      .populate("user")
+      .lean();
+
+    /*
+    res.render('moms/index', {
+      moms,
+    }); */
+  } catch (err) {
+    console.error(err);
+    // res.render("error/500");
   }
 });
 

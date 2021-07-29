@@ -10,9 +10,9 @@ const MomSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: {
+  firstName: {
     type: String,
-    default: "public",
+    required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

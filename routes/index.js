@@ -5,7 +5,6 @@ const router = express.Router();
 // @desc Login/Landing page
 // @route GET /
 router.get("/", (req, res) => {
-  res.send("Working");
   // res.render("Login");
 });
 
@@ -13,7 +12,7 @@ router.get("/", (req, res) => {
 // @route GET /dashboard
 router.get("/dashboard", async (req, res) => {
   try {
-    const moms = await Mom.find({ user: req.user.id });
+    const moms = await Mom.find({ user: req.user.id }).lean();
     res.render({
       name: req.user.firstName,
       moms,

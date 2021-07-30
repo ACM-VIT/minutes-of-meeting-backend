@@ -24,13 +24,12 @@ module.exports = function (passport) {
           lastName: profile.name.familyName,
           email: profile.emails[0].value,
           image: profile.photos[0].value,
-          // token: accessToken,
         };
 
         try {
           let user = await User.findOne({ googleId: profile.id });
 
-          if (user) {
+          if (user !== undefined) {
             // user["token"] = accessToken;
             done(null, user);
           } else {

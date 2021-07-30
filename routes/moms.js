@@ -29,12 +29,15 @@ router.post("/", async (req, res) => {
 // @route GET /moms
 router.get("/", async (req, res) => {
   try {
-    const moms = await Mom.find({ status: "public" })
-      .populate("user")
-      .sort({ createdAt: "desc" })
-      .lean();
+    // const moms = await User.find()
+    const moms = await Mom.find().populate("user").sort({ createdAt: "desc" });
+    // .lean();
+
     res.json({ moms: moms });
-    // console.log(moms);
+    // return {
+    //   moms: moms,
+    // };
+    // console.log(`${moms} this is coming from line 37 `);
 
     /* 
     res.render("moms/index", {
@@ -146,6 +149,10 @@ router.get("/user/:userId", async (req, res) => {
     })
       .populate("user")
       .lean();
+    console.log(await Mom.findById("6103029f96bb0f491446c2ac"));
+    console.log(req.params.userId);
+    res.json({ singleUserMoms: moms });
+    // console.log(moms);
 
     /*
     res.render('moms/index', {

@@ -1,3 +1,6 @@
+/* eslint-disable no-underscore-dangle */
+const jwt = require("jsonwebtoken");
+
 /** Express router providing user related routes
  * @requires express
  * @requires passport
@@ -23,13 +26,16 @@ router.get(
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
+
 router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: process.env.CLIENT_ERROR_URL,
   }),
   (req, res) => {
-    res.redirect(process.env.CLIENT_HOME_URL);
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
+    // console.log(req.user);
+    res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
   }
 );
 

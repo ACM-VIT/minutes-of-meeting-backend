@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const User = require("./User");
+
 const MomSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -10,13 +12,7 @@ const MomSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-  },
+
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

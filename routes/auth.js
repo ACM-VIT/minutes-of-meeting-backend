@@ -1,12 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 const jwt = require("jsonwebtoken");
-
+const createError = require("http-errors");
 /** Express router providing user related routes
  * @requires express
  * @requires passport
  */
 const express = require("express");
 const passport = require("passport");
+const { create } = require("../models/User");
 const router = express.Router();
 
 /**
@@ -32,10 +33,29 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: process.env.CLIENT_ERROR_URL,
   }),
-  (req, res) => {
+  // eslint-disable-next-line consistent-return
+  (req, res, next) => {
+    // res.redirect(process.env.CLIENT_URL);
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
-    // console.log(req.user);
-    res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
+    console.log(req.user);
+    // res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
+    res.redirect(process.env.CLIENT_HOME_URL);
+
+    console.log({ token: token });
+    console.log(req.headers.authorization);
+
+    try {
+      // JWT token Verification
+      const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+        complete: false,
+      });
+
+      // Get userId from token
+      const userId = decoded.id;
+      console.log({ userId: userId });
+    } catch (err) {
+      return next(createError.Unauthorized());
+    }
   }
 );
 

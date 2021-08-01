@@ -35,7 +35,6 @@ module.exports = function (passport) {
           } else {
             user = await User.create(newUser);
             // user["token"] = accessToken;
-            // console.log(user.token);
             done(null, user);
           }
         } catch (err) {

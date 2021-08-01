@@ -29,8 +29,10 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     // const moms = await User.find()
-    const moms = await Mom.find().populate("user").sort({ createdAt: "desc" });
-    // .lean();
+    const moms = await Mom.find()
+      .populate("user")
+      .sort({ createdAt: "desc" })
+      .lean();
 
     res.json({ moms: moms });
     // return {

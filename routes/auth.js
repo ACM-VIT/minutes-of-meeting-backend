@@ -37,12 +37,8 @@ router.get(
   (req, res, next) => {
     // res.redirect(process.env.CLIENT_URL);
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
-    console.log(req.user);
-    // res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
-    res.redirect(process.env.CLIENT_HOME_URL);
-
-    console.log({ token: token });
-    console.log(req.headers.authorization);
+    // console.log(req.user);
+    res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
 
     try {
       // JWT token Verification
@@ -52,7 +48,7 @@ router.get(
 
       // Get userId from token
       const userId = decoded.id;
-      console.log({ userId: userId });
+      console.log({ userId });
     } catch (err) {
       return next(createError.Unauthorized());
     }

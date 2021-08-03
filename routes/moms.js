@@ -2,6 +2,7 @@
 
 const express = require("express");
 const Mom = require("../models/Mom");
+const { verifyToken } = require("../middleware/jwt_helper");
 const router = express.Router();
 
 // @desc Add page
@@ -26,7 +27,7 @@ router.post("/", async (req, res) => {
 
 // @desc Show all moms (public)
 // @route GET /moms
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     // const moms = await User.find()
     const moms = await Mom.find()
@@ -34,7 +35,8 @@ router.get("/", async (req, res) => {
       .sort({ createdAt: "desc" })
       .lean();
 
-    res.json({ moms: moms });
+    // console.log(req.headers.authorization);
+    res.json({ moms });
     // return {
     //   moms: moms,
     // };

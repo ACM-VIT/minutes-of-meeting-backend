@@ -35,7 +35,9 @@ app.use(passport.session());
 
 // cors
 // app.use(cors({ origin: "http://localhost:3000/", credentials: true }));
+// app.use(cors({ origin: "http://localhost:3000/", optionsSuccessStatus: 200 }));
 app.use(cors());
+app.options("*", cors());
 
 // Body-Parser Middleware
 app.use(express.urlencoded({ extended: false }));

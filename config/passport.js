@@ -29,6 +29,7 @@ module.exports = function (passport) {
         try {
           let user = await User.findOne({ googleId: profile.id });
 
+          // Check whether user present in database
           if (user !== undefined) {
             // user["token"] = accessToken;
             done(null, user);

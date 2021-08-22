@@ -26,11 +26,11 @@ module.exports = {
           return res.status(401).send("Invalid token sent");
         }
       }
-      req.payload = payload;
+      req.user = payload; // User id
 
       // User id
-      const userId = req.payload.id;
-      console.log({ "userId after token verification": userId });
+      // const userId = req.payload.id;
+      // console.log({ "userId after token verification": userId });
       next();
     });
   },

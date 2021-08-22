@@ -5,23 +5,17 @@ const Mom = require("../models/Mom");
 const { verifyToken } = require("../middleware/jwt_helper");
 const router = express.Router();
 
-// @desc Add page
-// @route GET /moms/add
-router.get("/add", (req, res) => {
-  // res.render("moms/add");
-});
-
 // @desc process Add form
 // @route POST /moms
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
-    // req.body.user = req.user.id;
-    await Mom.create(req.body);
+    const mom = req.body;
+    mom.user = req.user.id;
+    await Mom.create(mom);
     // res.redirect("/dashboard");
-    res.send(req.body);
+    return res.json(mom);
   } catch (err) {
-    console.error(err);
-    // res.render("error/500");
+    return console.error(err);
   }
 });
 
@@ -29,13 +23,11 @@ router.post("/", async (req, res) => {
 // @route GET /moms
 router.get("/", verifyToken, async (req, res) => {
   try {
-    // const moms = await User.find()
     const moms = await Mom.find()
       .populate("user")
       .sort({ createdAt: "desc" })
       .lean();
 
-    // console.log(req.headers.authorization);
     res.json({ moms });
     // return {
     //   moms: moms,
@@ -47,66 +39,66 @@ router.get("/", verifyToken, async (req, res) => {
       moms
     }) */
   } catch (err) {
-    console.error(err);
-    // res.render("error/500");
+    res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Show single MoM
 // @route GET /moms/:id
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).populate("user").lean();
 
     if (!mom) {
-      // return res.render("error/404");
+      res.sendStatus(404);
     }
-
-    /*
-    res.render("moms/show", {
-      mom
-    }); */
   } catch (err) {
-    console.error(err);
-    // return res.render("error/404");
+    res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Edit page
 // @route GET /moms/edit/:id
-router.get("/edit/:id", async (req, res) => {
-  const mom = await Mom.findOne({
-    _id: req.params.id,
-  }).lean();
+router.get("/edit/:id", verifyToken, async (req, res) => {
+  try {
+    const mom = await Mom.findOne({
+      _id: req.params.id,
+    })
+      .populate("user")
+      .lean();
 
-  if (!mom) {
-    // return res.render("error/404")
-  }
+    if (!mom) {
+      res.sendStatus(404);
+    }
 
-  // If some other user tries to edit MoM
-  if (mom.user !== req.user.id) {
-    res.redirect("/moms");
-  } else {
-    /*
-    res.render("moms/edit", {
-      mom
-    }) */
+    // console.log(mom);
+
+    // If some other user tries to edit MoM
+    // eslint-disable-next-line no-underscore-dangle
+    if (mom.user._id !== req.user.id) {
+      res.redirect("/dashboard");
+    } else {
+      res.json({ mom });
+    }
+  } catch (err) {
+    res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Update MoM
 // @route PUT /moms/:id
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, async (req, res) => {
   try {
     let mom = Mom.findById(req.params.id).lean();
 
     if (!mom) {
-      // return res.render("error/404");
+      res.sendStatus(404);
     }
 
     // If some other user tries to update MoM
-    if (mom.user !== req.user.id) {
-      res.redirect("/moms");
+    // eslint-disable-next-line no-underscore-dangle
+    if (mom.user._id !== req.user.id) {
+      res.redirect("/dashboard");
     } else {
       mom = await Mom.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
@@ -116,36 +108,35 @@ router.put("/:id", async (req, res) => {
       res.redirect("/dashboard");
     }
   } catch (err) {
-    console.error(err);
-    // return res.render("error/500");
+    res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Delete MoM
 // @ route DELETE /moms/:id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).lean();
 
     if (!mom) {
-      // return res.render("error/404");
+      res.sendStatus(404);
     }
 
-    if (mom.user !== req.user.id) {
+    // eslint-disable-next-line no-underscore-dangle
+    if (mom.user._id !== req.user.id) {
       res.redirect("/moms");
     } else {
       await Mom.remove({ _id: req.params.id });
       res.redirect("/dashboard");
     }
   } catch (err) {
-    console.error(err);
-    // return res.render("error/500");
+    res.json({ error: true, message: err.message });
   }
 });
 
-// @desc Singer user MoMs
+// @desc Single user MoMs
 // @route GET /moms/user/:userId
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId", verifyToken, async (req, res) => {
   try {
     const moms = await Mom.find({
       user: req.params.userId,

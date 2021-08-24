@@ -12,7 +12,6 @@ router.post("/", verifyToken, async (req, res) => {
     const mom = req.body;
     mom.user = req.user.id;
     await Mom.create(mom);
-    // res.redirect("/dashboard");
     return res.json(mom);
   } catch (err) {
     return console.error(err);
@@ -28,37 +27,31 @@ router.get("/", verifyToken, async (req, res) => {
       .sort({ createdAt: "desc" })
       .lean();
 
-    res.json({ moms });
-    // return {
-    //   moms: moms,
-    // };
+    return res.json({ moms });
     // console.log(`${moms} this is coming from line 37 `);
-
-    /* 
-    res.render("moms/index", {
-      moms
-    }) */
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Show single MoM
 // @route GET /moms/:id
+// eslint-disable-next-line consistent-return
 router.get("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).populate("user").lean();
 
     if (!mom) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Edit page
 // @route GET /moms/edit/:id
+// eslint-disable-next-line consistent-return
 router.get("/edit/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findOne({
@@ -68,7 +61,7 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
       .lean();
 
     if (!mom) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
 
     // console.log(mom);
@@ -78,10 +71,10 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
     if (mom.user._id !== req.user.id) {
       res.redirect("/dashboard");
     } else {
-      res.json({ mom });
+      return res.json({ mom });
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
@@ -114,6 +107,7 @@ router.put("/:id", verifyToken, async (req, res) => {
 
 // @desc Delete MoM
 // @ route DELETE /moms/:id
+// eslint-disable-next-line consistent-return
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).lean();
@@ -130,7 +124,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
       res.redirect("/dashboard");
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
@@ -143,18 +137,12 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     })
       .populate("user")
       .lean();
-    console.log(await Mom.findById("6103029f96bb0f491446c2ac"));
-    console.log(req.params.userId);
-    res.json({ singleUserMoms: moms });
+    // console.log(await Mom.findById("6103029f96bb0f491446c2ac"));
+    // console.log(req.params.userId);
+    return res.json({ singleUserMoms: moms });
     // console.log(moms);
-
-    /*
-    res.render('moms/index', {
-      moms,
-    }); */
   } catch (err) {
-    console.error(err);
-    // res.render("error/500");
+    return res.json({ error: true, message: err.message });
   }
 });
 

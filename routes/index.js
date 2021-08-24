@@ -1,5 +1,6 @@
 const express = require("express");
 const Mom = require("../models/Mom");
+const { verifyToken } = require("../middleware/jwt_helper");
 const router = express.Router();
 
 // @desc Login/Landing page
@@ -10,7 +11,7 @@ router.get("/", (req, res) => {
 
 // @desc Dashboard
 // @route GET /dashboard
-router.get("/dashboard", async (req, res) => {
+router.get("/dashboard", verifyToken, async (req, res) => {
   try {
     const moms = await Mom.find({ user: req.user.id }).lean();
     res.render({
@@ -19,8 +20,7 @@ router.get("/dashboard", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    // error page
-    // res.render("error/500");
+    res.json({ error: true, message: err.message });
   }
 });
 

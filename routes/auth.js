@@ -35,7 +35,6 @@ router.get(
   }),
   // eslint-disable-next-line consistent-return
   (req, res, next) => {
-    // res.redirect(process.env.CLIENT_URL);
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
     // console.log(req.user);
     res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);

@@ -34,8 +34,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // cors
-// app.use(cors({ origin: "http://localhost:3000/", credentials: true }));
-// app.use(cors({ origin: "http://localhost:3000/", optionsSuccessStatus: 200 }));
 app.use(cors());
 app.options("*", cors());
 
@@ -50,14 +48,12 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/", require("./routes/index"));
 app.use("/auth", require("./routes/auth"));
 app.use("/moms", require("./routes/moms"));
-app.get("/login", (req, res) => {
-  res.send(req.user);
-  console.log(req.user);
-  // console.log(res);
-});
+// app.get("/login", (req, res) => {
+//   res.send(req.user);
+//   console.log(req.user);
+// });
 
 const PORT = 9000 || process.env.PORT;
 

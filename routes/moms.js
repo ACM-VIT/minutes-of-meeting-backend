@@ -1,9 +1,23 @@
+/* eslint-disable no-underscore-dangle */
 // Markdown routes(CRUD features)
 
 const express = require("express");
 const Mom = require("../models/Mom");
+const User = require("../models/User");
 const { verifyToken } = require("../middleware/jwt_helper");
 const router = express.Router();
+
+// @desc Dashboard
+// @route GET /dashboard
+router.get("/dashboard", verifyToken, async (req, res) => {
+  try {
+    const mom = await Mom.find().sort({ createdAt: "desc" });
+    const momArr = mom.filter((el) => String(el.user) === req.user.id);
+    res.json(momArr);
+  } catch (err) {
+    res.json({ error: true, message: err.message });
+  }
+});
 
 // @desc process Add form
 // @route POST /moms
@@ -12,7 +26,6 @@ router.post("/", verifyToken, async (req, res) => {
     const mom = req.body;
     mom.user = req.user.id;
     await Mom.create(mom);
-    // res.redirect("/dashboard");
     return res.json(mom);
   } catch (err) {
     return console.error(err);
@@ -29,15 +42,6 @@ router.get("/", verifyToken, async (req, res) => {
       .lean();
 
     res.json({ moms });
-    // return {
-    //   moms: moms,
-    // };
-    // console.log(`${moms} this is coming from line 37 `);
-
-    /* 
-    res.render("moms/index", {
-      moms
-    }) */
   } catch (err) {
     res.json({ error: true, message: err.message });
   }
@@ -47,11 +51,12 @@ router.get("/", verifyToken, async (req, res) => {
 // @route GET /moms/:id
 router.get("/:id", verifyToken, async (req, res) => {
   try {
-    const mom = await Mom.findById(req.params.id).populate("user").lean();
-
-    if (!mom) {
-      res.sendStatus(404);
-    }
+    const mom = await Mom.findOne({
+      _id: req.params.id,
+    })
+      .populate("user")
+      .lean();
+    res.send(mom);
   } catch (err) {
     res.json({ error: true, message: err.message });
   }
@@ -69,16 +74,14 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
 
     if (!mom) {
       res.sendStatus(404);
+      throw new Error("MOM not found");
     }
 
-    // console.log(mom);
-
     // If some other user tries to edit MoM
-    // eslint-disable-next-line no-underscore-dangle
-    if (mom.user._id !== req.user.id) {
-      res.redirect("/dashboard");
+    if (String(mom.user._id) !== req.user.id) {
+      throw new Error("ID doesn't match!");
     } else {
-      res.json({ mom });
+      res.json(mom);
     }
   } catch (err) {
     res.json({ error: true, message: err.message });
@@ -89,23 +92,21 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
 // @route PUT /moms/:id
 router.put("/:id", verifyToken, async (req, res) => {
   try {
-    let mom = Mom.findById(req.params.id).lean();
+    let mom = await Mom.findById(req.params.id).populate("user").lean();
 
     if (!mom) {
       res.sendStatus(404);
     }
 
-    // If some other user tries to update MoM
-    // eslint-disable-next-line no-underscore-dangle
-    if (mom.user._id !== req.user.id) {
-      res.redirect("/dashboard");
+    if (String(mom.user._id) !== req.user.id) {
+      throw new Error("ID doesn't match!");
     } else {
       mom = await Mom.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true,
       });
 
-      res.redirect("/dashboard");
+      res.json("MOM updated!");
     }
   } catch (err) {
     res.json({ error: true, message: err.message });
@@ -122,39 +123,27 @@ router.delete("/:id", verifyToken, async (req, res) => {
       res.sendStatus(404);
     }
 
-    // eslint-disable-next-line no-underscore-dangle
-    if (mom.user._id !== req.user.id) {
-      res.redirect("/moms");
+    if (String(mom.user._id) !== req.user.id) {
+      res.send("Error from 148");
     } else {
       await Mom.remove({ _id: req.params.id });
-      res.redirect("/dashboard");
+      res.json("Mom Deleted");
     }
   } catch (err) {
     res.json({ error: true, message: err.message });
   }
 });
 
-// @desc Single user MoMs
+// @desc Single user MOMs
 // @route GET /moms/user/:userId
 router.get("/user/:userId", verifyToken, async (req, res) => {
   try {
-    const moms = await Mom.find({
-      user: req.params.userId,
-    })
+    const moms = await Mom.find({ user: req.params.userId })
       .populate("user")
       .lean();
-    console.log(await Mom.findById("6103029f96bb0f491446c2ac"));
-    console.log(req.params.userId);
-    res.json({ singleUserMoms: moms });
-    // console.log(moms);
-
-    /*
-    res.render('moms/index', {
-      moms,
-    }); */
+    res.json(moms);
   } catch (err) {
     console.error(err);
-    // res.render("error/500");
   }
 });
 

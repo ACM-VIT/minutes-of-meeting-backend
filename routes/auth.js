@@ -1,6 +1,8 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
 const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
+
 /** Express router providing user related routes
  * @requires express
  * @requires passport
@@ -9,6 +11,7 @@ const express = require("express");
 const passport = require("passport");
 const { create } = require("../models/User");
 const router = express.Router();
+const mom = require("../models/Mom");
 
 /**
  * @description Auth with google
@@ -33,11 +36,18 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: process.env.CLIENT_ERROR_URL,
   }),
-  // eslint-disable-next-line consistent-return
   (req, res, next) => {
-    // res.redirect(process.env.CLIENT_URL);
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
-    // console.log(req.user);
+    const token = jwt.sign(
+      {
+        id: req.user._id,
+        googleId: req.user.googleId,
+        firstName: req.user.firstName,
+        displayName: req.user.displayName,
+        image: req.user.image,
+      },
+      process.env.JWT_SECRET
+    );
+
     res.redirect(`${process.env.CLIENT_HOME_URL}?token=${token}`);
 
     try {
@@ -48,7 +58,6 @@ router.get(
 
       // Get userId from token
       const userId = decoded.id;
-      console.log({ userId });
     } catch (err) {
       return next(createError.Unauthorized());
     }

@@ -12,11 +12,6 @@ module.exports = function (passport) {
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        // const userToken = {
-        //   token: accessToken,
-        // };
-        // console.log(accessToken);
-
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
@@ -29,13 +24,10 @@ module.exports = function (passport) {
         try {
           let user = await User.findOne({ googleId: profile.id });
 
-          // Check whether user present in database
-          if (user !== undefined) {
-            // user["token"] = accessToken;
+          if (user) {
             done(null, user);
           } else {
             user = await User.create(newUser);
-            // user["token"] = accessToken;
             done(null, user);
           }
         } catch (err) {

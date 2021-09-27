@@ -1,9 +1,9 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
 // Markdown routes(CRUD features)
 
 const express = require("express");
 const Mom = require("../models/Mom");
-const User = require("../models/User");
 const { verifyToken } = require("../middleware/jwt_helper");
 const router = express.Router();
 
@@ -43,12 +43,13 @@ router.get("/", verifyToken, async (req, res) => {
 
     res.json({ moms });
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Show single MoM
 // @route GET /moms/:id
+// eslint-disable-next-line consistent-return
 router.get("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findOne({
@@ -58,12 +59,13 @@ router.get("/:id", verifyToken, async (req, res) => {
       .lean();
     res.send(mom);
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
 // @desc Edit page
 // @route GET /moms/edit/:id
+// eslint-disable-next-line consistent-return
 router.get("/edit/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findOne({
@@ -84,7 +86,7 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
       res.json(mom);
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 
@@ -115,6 +117,7 @@ router.put("/:id", verifyToken, async (req, res) => {
 
 // @desc Delete MoM
 // @ route DELETE /moms/:id
+// eslint-disable-next-line consistent-return
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).lean();
@@ -130,7 +133,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
       res.json("Mom Deleted");
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res.json({ error: true, message: err.message });
   }
 });
 

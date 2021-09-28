@@ -3,54 +3,58 @@ const express = require("express");
 const dotenv = require("dotenv");
 const passport = require("passport");
 const session = require("express-session");
-// const flash = require("connect-flash");
 const bodyParser = require("body-parser");
-// const showdown = require("showdown");
 const MongoStore = require("connect-mongo");
 const cors = require("cors");
-
-// convertRouter = require("./routes/index");
 
 const connectDB = require("./config/db");
 
 // Load Config
 dotenv.config({ path: "./config/config.env" });
 
-// passport config
+// Passport config
 require("./config/passport")(passport);
 
 connectDB();
 
 const app = express();
 
-// sessions
+// Sessions
 app.use(
-	session({
-		secret: "acta",
-		resave: false,
-		saveUninitialized: false,
-		store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-	})
+  session({
+    secret: "acta",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  })
 );
 
-// passport middleware
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(flash());
+// cors
+app.use(cors());
+app.options("*", cors());
 
-// Routes
-app.use("/", require("./routes/"));
-app.use("/auth", require("./routes/auth"));
-// app.use("/convert", convertRouter);
-
-// Body-Parser
+// Body-Parser Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// cors
-app.use(cors());
+// Set global var (used in routes)
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 
-const PORT = process.env.PORT;
+// Routes
+app.use("/auth", require("./routes/auth"));
+app.use("/moms", require("./routes/moms"));
+// app.get("/login", (req, res) => {
+//   res.send(req.user);
+//   console.log(req.user);
+// });
+
+const PORT = 9000 || process.env.PORT;
 
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

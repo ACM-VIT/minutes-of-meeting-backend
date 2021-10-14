@@ -13,9 +13,11 @@ router.get("/dashboard", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.find().sort({ createdAt: "desc" });
     const momArr = mom.filter((el) => String(el.user) === req.user.id);
-    res.json(momArr);
+    return res.json(momArr);
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res
+      .status(500)
+      .json({ error: true, message: "We're sorry, something went wrong." });
   }
 });
 
@@ -28,7 +30,10 @@ router.post("/", verifyToken, async (req, res) => {
     await Mom.create(mom);
     return res.json(mom);
   } catch (err) {
-    return console.error(err);
+    return res.status(500).json({
+      error: true,
+      message: "No information can be sent to the server.",
+    });
   }
 });
 
@@ -41,9 +46,9 @@ router.get("/", verifyToken, async (req, res) => {
       .sort({ createdAt: "desc" })
       .lean();
 
-    res.json({ moms });
+    return res.json({ moms });
   } catch (err) {
-    return res.json({ error: true, message: err.message });
+    return res.status(404).json({ error: true, message: "No MOM was found!" });
   }
 });
 
@@ -57,9 +62,12 @@ router.get("/:id", verifyToken, async (req, res) => {
     })
       .populate("user")
       .lean();
-    res.send(mom);
+    if (mom === null) {
+      return res.status(404).json({ error: true, message: "MOM Not Found!" });
+    }
+    return res.send(mom);
   } catch (err) {
-    return res.json({ error: true, message: err.message });
+    return res.status(404).json({ error: true, message: "MOM Not Found!" });
   }
 });
 
@@ -74,19 +82,16 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
       .populate("user")
       .lean();
 
-    if (!mom) {
-      res.sendStatus(404);
-      throw new Error("MOM not found");
-    }
-
     // If some other user tries to edit MoM
     if (String(mom.user._id) !== req.user.id) {
       throw new Error("ID doesn't match!");
     } else {
-      res.json(mom);
+      return res.json(mom);
     }
   } catch (err) {
-    return res.json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -96,10 +101,6 @@ router.put("/:id", verifyToken, async (req, res) => {
   try {
     let mom = await Mom.findById(req.params.id).populate("user").lean();
 
-    if (!mom) {
-      res.sendStatus(404);
-    }
-
     if (String(mom.user._id) !== req.user.id) {
       throw new Error("ID doesn't match!");
     } else {
@@ -107,11 +108,12 @@ router.put("/:id", verifyToken, async (req, res) => {
         new: true,
         runValidators: true,
       });
-
-      res.json("MOM updated!");
+      return res.json("MOM updated!");
     }
   } catch (err) {
-    res.json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -122,18 +124,16 @@ router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const mom = await Mom.findById(req.params.id).lean();
 
-    if (!mom) {
-      res.sendStatus(404);
-    }
-
     if (String(mom.user._id) !== req.user.id) {
-      res.send("Error from 148");
+      throw new Error("ID doesn't match!");
     } else {
       await Mom.remove({ _id: req.params.id });
-      res.json("Mom Deleted");
+      return res.json("Mom Deleted");
     }
   } catch (err) {
-    return res.json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -144,9 +144,14 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     const moms = await Mom.find({ user: req.params.userId })
       .populate("user")
       .lean();
-    res.json(moms);
+    if (moms.length === 0) {
+      return res.status(404).json({ error: true, message: "MOM Not Found" });
+    }
+    return res.json(moms);
   } catch (err) {
-    console.error(err);
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 

@@ -2,9 +2,7 @@ const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const passport = require("passport");
-const session = require("express-session");
 const bodyParser = require("body-parser");
-const MongoStore = require("connect-mongo");
 const cors = require("cors");
 
 const connectDB = require("./config/db");
@@ -19,19 +17,8 @@ connectDB();
 
 const app = express();
 
-// Sessions
-app.use(
-  session({
-    secret: "acta",
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-  })
-);
-
 // Passport middleware
 app.use(passport.initialize());
-app.use(passport.session());
 
 // cors
 app.use(cors());
@@ -50,10 +37,6 @@ app.use((req, res, next) => {
 // Routes
 app.use("/auth", require("./routes/auth"));
 app.use("/moms", require("./routes/moms"));
-// app.get("/login", (req, res) => {
-//   res.send(req.user);
-//   console.log(req.user);
-// });
 
 const PORT = 9000 || process.env.PORT;
 

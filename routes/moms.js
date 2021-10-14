@@ -15,7 +15,9 @@ router.get("/dashboard", verifyToken, async (req, res) => {
     const momArr = mom.filter((el) => String(el.user) === req.user.id);
     return res.json(momArr);
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res
+      .status(500)
+      .json({ error: true, message: "We're sorry, something went wrong." });
   }
 });
 
@@ -28,7 +30,10 @@ router.post("/", verifyToken, async (req, res) => {
     await Mom.create(mom);
     return res.json(mom);
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res.status(500).json({
+      error: true,
+      message: "No information can be sent to the server.",
+    });
   }
 });
 
@@ -43,7 +48,7 @@ router.get("/", verifyToken, async (req, res) => {
 
     return res.json({ moms });
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res.status(404).json({ error: true, message: "No MOM was found!" });
   }
 });
 
@@ -58,11 +63,11 @@ router.get("/:id", verifyToken, async (req, res) => {
       .populate("user")
       .lean();
     if (mom === null) {
-      return res.status(404).json({ error: true, message: "404 Not Found!" });
+      return res.status(404).json({ error: true, message: "MOM Not Found!" });
     }
     return res.send(mom);
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res.status(404).json({ error: true, message: "MOM Not Found!" });
   }
 });
 
@@ -84,7 +89,9 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
       return res.json(mom);
     }
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -104,7 +111,9 @@ router.put("/:id", verifyToken, async (req, res) => {
       return res.json("MOM updated!");
     }
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -122,7 +131,9 @@ router.delete("/:id", verifyToken, async (req, res) => {
       return res.json("Mom Deleted");
     }
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 
@@ -134,11 +145,13 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
       .populate("user")
       .lean();
     if (moms.length === 0) {
-      return res.status(404).json({ error: true, message: "404 Not Found" });
+      return res.status(404).json({ error: true, message: "MOM Not Found" });
     }
     return res.json(moms);
   } catch (err) {
-    return res.status(404).json({ error: true, message: err.message });
+    return res
+      .status(401)
+      .json({ error: true, message: "User not authorized" });
   }
 });
 

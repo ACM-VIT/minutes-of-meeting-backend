@@ -32,7 +32,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: process.env.CLIENT_ERROR_URL,
+    failureRedirect: `${process.env.CLIENT_ERROR_URL}`,
   }),
   (req, res, next) => {
     const token = jwt.sign(

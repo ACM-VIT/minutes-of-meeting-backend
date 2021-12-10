@@ -1,46 +1,52 @@
 ![ACM-HEADER](https://user-images.githubusercontent.com/14032427/92643737-e6252e00-f2ff-11ea-8a51-1f1b69caba9f.png)
 
-<h1 align="center"> PROJECT TITLE </h1>
+<h1 align="center"> ACTA Backend </h1>
 
 <p align="center"> 
-Short description about the project.
+Backend for ACTA, a Progressive Web App which will serve as a hub to store all the official Minutes of Meeting documents for ACM VIT.
 </p>
 
 <p>
   <a href="https://acmvit.in/" target="_blank">
     <img alt="made-by-acm" src="https://img.shields.io/badge/MADE%20BY-ACM%20VIT-blue?style=for-the-badge" />
   </a>
-    <!-- Uncomment the below line to add the license badge. Make sure the right license badge is reflected. -->
-    <!-- <img alt="license" src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" /> -->
-    <!-- forks/stars/tech stack in the form of badges from https://shields.io/ -->
+  <a href='https://github.com/ACM-VIT/minutes-of-meeting-frontend/blob/master/LICENSE' target="_blank">
+    <img alt="license" src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" />
+  </a>
 </p>
 
 ---
+## Features
 
-The overview starts here. Random text about the project, motive, how, what, why etc.
-
----
-
-## Screenshots
-
-<!-- Add one screenshot of your project (max height: 1000px, max size: 1mb) 'if applicable' under assets folder in root of your project ![sceenshot](assets/<name of image>) -->
-<!-- if your project has multiple pictures , merge them into one image using a tool similar to figma -->
+ - Users can create, update and delete their Minutes of Meeting documents.
+ 
+ - View all other MOMs written by different users at a single place itself.
 
 ---
 
 ## Usage
 <!-- How To, Features, Installation etc. as subheadings in this section. example-->
 
-Lets get started!
+To setup project locally, fork the repository.
 ```console
-git remote add
-git fetch
-git merge
+# Install Packages
+npm i
+
+# Build Script
+npm run build
+
+# Run the server
+npm start
 ```
 
 ---
 
-## Authors
+**Authors:** [Likhit Ajeesh](https://github.com/Likkiii), [Anish Mittal](https://github.com/ANISH0309)  
 
-**Authors:** <!-- [author1's name](link to their github profile), [author2's name](link to their github profile) .. -->  
-**Contributors:** <!-- Generate contributors list using this link - https://contributors-img.web.app/preview -->
+**Mentors:** [Shreyas K](https://github.com/HelixW) , [Yash Kumar Verma](https://github.com/YashKumarVerma)
+
+---
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
